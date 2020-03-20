@@ -7,30 +7,29 @@
 
 // DOM 加载完再执行
 $(function() {
-	//选中第一项menu
-	$(".blog-menu .list-group-item:first").trigger("click");
 
-	//触发url属性 进行ajax
+	// 菜单事件
 	$(".blog-menu .list-group-item").click(function() {
-		//获取url属性值
+ 
 		var url = $(this).attr("url");
-		//删除active样式
-		$(".menu .list-group-item").removeClass("active");
-		//给当前的menu设置active样式
-		$(this).addClass("active");
-		//ajax
-		$.ajax(
-			{
-				url: url,
-				success: function(data) {
-					$("#rightContainer").html(data);
-				},
-				error: function () {
-					alert("error!")
-				}
-			}
-		);
+		
+		// 先移除其他的点击样式，再添加当前的点击样式
+		$(".blog-menu .list-group-item").removeClass("active");
+		$(this).addClass("active");  
+ 
+		// 加载其他模块的页面到右侧工作区
+		 $.ajax({ 
+			 url: url, 
+			 success: function(data){
+				 $("#rightContainer").html(data);
+		 },
+		 error : function() {
+		     alert("error");
+		     }
+		 });
 	});
 	
-
+	
+	// 选中菜单第一项
+	 $(".blog-menu .list-group-item:first").trigger("click");
 });

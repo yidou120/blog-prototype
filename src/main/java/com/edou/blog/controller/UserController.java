@@ -6,6 +6,7 @@ import com.edou.blog.repository.UserRepository;
 import com.edou.blog.repository.UserRepositoryByDataBase;
 import com.edou.blog.service.AuthorityService;
 import com.edou.blog.service.UserService;
+import com.edou.blog.util.ConstraintViolationExceptionHandler;
 import com.edou.blog.vo.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -95,8 +97,8 @@ public class UserController {
         //保存
         try {
             userService.saveUser(user);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ConstraintViolationException e) {
+            return ResponseEntity.ok().body(new Response(false, ConstraintViolationExceptionHandler.getMessage(e)));
         }
         return ResponseEntity.ok().body(new Response(true,"处理成功",user));
     }

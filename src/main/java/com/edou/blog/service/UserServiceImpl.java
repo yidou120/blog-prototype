@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -23,21 +24,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
     UserRepositoryByDataBase userRepositoryByDataBase;
 
+    @Transactional
     @Override
     public User saveUser(User user) {
         return userRepositoryByDataBase.save(user);
     }
 
+    @Transactional
     @Override
     public void removeUser(Long id) {
         userRepositoryByDataBase.delete(id);
     }
 
+    @Transactional
     @Override
     public void removeUsersInBatch(List<User> users) {
         userRepositoryByDataBase.deleteInBatch(users);
     }
 
+    @Transactional
     @Override
     public User updateUser(User user) {
         return userRepositoryByDataBase.save(user);
