@@ -20,11 +20,8 @@
 								data-target="#flipFlop" role="button"
 								data-th-attr="userName=${userModel.user.username}">  
 								<img th:src="${userModel.user.avatar} == null ? 'https://avatars3.githubusercontent.com/u/3233966?v=3&s=460' : ${userModel.user.avatar} " class="blog-avatar blog-avatar-230"
-                             alt="waylau">
-							</a>
- 
-                        
-                      </a>
+                             alt="edou">
+					</a>
                     </span>
 
                 </div>
@@ -45,7 +42,7 @@
             <div class="card ">
  				<h5 class="card-header"><i class="fa fa-cog" aria-hidden="true"></i> 个人设置</h5>
                     <div class="card-block">
-						<form th:action="@{/u/admin/profile}" method="post" th:object="${userModel.user}" id="userForm">
+						<form th:action="@{'/u/'+${userModel.user.username}+'/profile'}" method="post" th:object="${userModel.user}" id="userForm">
 							<input type="hidden" name="id" id="userId" th:value="*{id}" >
 							
 							<div class="form-group ">
