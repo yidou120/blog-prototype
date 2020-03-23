@@ -78,6 +78,11 @@
                         <a class="dropdown-item" href="/u/waylau/profile" th:href="@{'/u/' + ${#authentication.name}} + '/profile'" >个人设置</a>
                     </div>
                 </div>
+
+                <div>
+                    <a href="/u/waylau/blogs/edit" th:href="'/u/' + ${#authentication.name} + '/blogs/edit'" class="btn btn-outline-success my-2 my-sm-0">写博客</a>
+                </div>
+
                 <form action="/logout" th:action="@{/logout}" method="post">
                     <input class="btn btn-outline-success " type="submit" value="退出">
                 </form>

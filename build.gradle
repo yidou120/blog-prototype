@@ -52,6 +52,8 @@ dependencies {
     compile('org.apache.commons:commons-lang3:3.5')
     // 添加   Thymeleaf Spring Security 依赖，与 Thymeleaf 版本一致都是 3.x
     compile('org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.2.RELEASE')
+    // 添加 Markdown parser 依赖
+    compile('es.nitaur.markdown:txtmark:0.16')
     testCompile("org.springframework.boot:spring-boot-starter-test")
     providedCompile("org.projectlombok:lombok:1.18.8")
 }
