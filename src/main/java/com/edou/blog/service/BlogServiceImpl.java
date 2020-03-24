@@ -1,11 +1,13 @@
 package com.edou.blog.service;
 
 import com.edou.blog.domain.Blog;
+import com.edou.blog.domain.Comment;
 import com.edou.blog.domain.User;
 import com.edou.blog.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -76,6 +78,24 @@ public class BlogServiceImpl implements BlogService {
     public void readingIncrease(Long id) {
         Blog blog = blogRepository.findOne(id);
         blog.setReadSize(blog.getReadSize()+1);
+        blogRepository.save(blog);
+    }
+
+    //发表评论
+    @Override
+    public Blog createComment(Long blogId, String commentContent) {
+        Blog blog = blogRepository.findOne(blogId);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Comment comment = new Comment(user,commentContent);
+        blog.addComment(comment);
+        return blogRepository.save(blog);
+    }
+
+    //删除评论
+    @Override
+    public void removeComment(Long blogId, Long commentId) {
+        Blog blog = blogRepository.findOne(blogId);
+        blog.removeComment(commentId);
         blogRepository.save(blog);
     }
 }

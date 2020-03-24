@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @ClassName Blog
@@ -19,6 +20,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity // 实体
 public class Blog implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Getter
@@ -68,6 +70,13 @@ public class Blog implements Serializable {
     @org.hibernate.annotations.CreationTimestamp  // 由数据库自动创建时间
     private Timestamp createTime;
 
+    //持久化Blog的时候 comment也会被持久化 --> cascadeType.all
+    @Getter
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "blog_comment", joinColumns = @JoinColumn(name = "blog_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "comment_id", referencedColumnName = "id"))
+    private List<Comment> comments;
+
     @Getter
     @Setter
     @Column(name="readSize")
@@ -98,6 +107,34 @@ public class Blog implements Serializable {
     public void setContent(String content) {
         this.content = content;
         this.htmlContent = Processor.process(content);
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+        this.commentSize = this.comments.size();
+    }
+
+    /**
+     * 添加评论
+     * @param comment
+     */
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        this.commentSize = this.comments.size();
+    }
+    /**
+     * 删除评论
+     * @param commentId
+     */
+    public void removeComment(Long commentId) {
+        for (int index=0; index < this.comments.size(); index ++ ) {
+            if (comments.get(index).getId() == commentId) {
+                this.comments.remove(index);
+                break;
+            }
+        }
+
+        this.commentSize = this.comments.size();
     }
 
 }
