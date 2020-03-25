@@ -63,6 +63,11 @@
   max-width: 100%; 
 }
 
+/* 避免图片超出 */
+article img {
+    max-width: 100%;
+}
+
 
 /* go to top */
 #goToTop{

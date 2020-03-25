@@ -3,6 +3,7 @@ package com.edou.blog.service;
 import com.edou.blog.domain.Blog;
 import com.edou.blog.domain.Comment;
 import com.edou.blog.domain.User;
+import com.edou.blog.domain.Vote;
 import com.edou.blog.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -79,6 +80,29 @@ public class BlogServiceImpl implements BlogService {
         Blog blog = blogRepository.findOne(id);
         blog.setReadSize(blog.getReadSize()+1);
         blogRepository.save(blog);
+    }
+
+    //点赞
+    @Override
+    public Blog createVote(Long blogId) {
+        Blog blogOrigin = blogRepository.findOne(blogId);
+        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Vote vote = new Vote(user);
+        boolean isExist = blogOrigin.addVote(vote);
+        if(isExist){
+            throw new IllegalArgumentException("该用户已经点过赞了");
+        }
+        Blog blog = blogRepository.save(blogOrigin);
+        return blog;
+    }
+
+    //取消点赞
+    @Override
+    public void removeVote(Long blogId, Long voteId) {
+        Blog blogOrigin = blogRepository.findOne(blogId);
+        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        blogOrigin.removeVote(voteId);
+        blogRepository.save(blogOrigin);
     }
 
     //发表评论

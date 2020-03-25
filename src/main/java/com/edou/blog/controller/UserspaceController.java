@@ -2,6 +2,7 @@ package com.edou.blog.controller;
 
 import com.edou.blog.domain.Blog;
 import com.edou.blog.domain.User;
+import com.edou.blog.domain.Vote;
 import com.edou.blog.service.BlogService;
 import com.edou.blog.service.UserService;
 import com.edou.blog.util.ConstraintViolationExceptionHandler;
@@ -158,6 +159,8 @@ public class UserspaceController {
     public String getBlogById(@PathVariable("username") String username,
                               @PathVariable("id") Long id,
                               Model model){
+        Blog blog = blogService.getBlogById(id);
+        User principal = null;
         //每次访问阅读量自增1
         blogService.readingIncrease(id);
         //是否是博主本人标志
@@ -166,13 +169,28 @@ public class UserspaceController {
             SecurityContextHolder.getContext().getAuthentication().isAuthenticated()&&
                 !SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString().equals("anonymousUser")
         ){
-            User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if(Objects.nonNull(user) && username.equals(user.getUsername())){
+            principal = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if(Objects.nonNull(principal) && username.equals(principal.getUsername())){
                 isBlogOwner = true;
             }
         }
+        //判断当前用户是否点赞本篇博客
+        Vote currentVote = null;
+        List<Vote> votes = blog.getVotes();
+
+        //如果当前没有用户登录 说明没有点赞权限
+        if(Objects.nonNull(principal)){
+            for(Vote vote:votes){
+                if(vote.getUser().getUsername().equals(principal.getUsername())){
+                    currentVote = vote;
+                    break;
+                }
+            }
+        }
+
         model.addAttribute("isBlogOwner",isBlogOwner);
         model.addAttribute("blogModel",blogService.getBlogById(id));
+        model.addAttribute("currentVote",currentVote);
         return "/userspace/blog";
     }
 
