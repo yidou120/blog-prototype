@@ -180,6 +180,17 @@ public class UserspaceController {
         //每次访问阅读量自增1
         blogService.readingIncrease(id);
 
+
+        // 判断操作用户是否是博客的所有者
+        boolean isBlogOwner = false;
+        if (SecurityContextHolder.getContext().getAuthentication() !=null && SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
+                &&  !SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString().equals("anonymousUser")) {
+            principal = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal !=null && username.equals(principal.getUsername())) {
+                isBlogOwner = true;
+            }
+        }
+
         //判断当前用户是否点赞本篇博客
         Vote currentVote = null;
         List<Vote> votes = blog.getVotes();
@@ -193,7 +204,7 @@ public class UserspaceController {
                 }
             }
         }
-
+        model.addAttribute("isBlogOwner", isBlogOwner);
         model.addAttribute("blogModel",blogService.getBlogById(id));
         model.addAttribute("currentVote",currentVote);
         return "/userspace/blog";
@@ -259,6 +270,7 @@ public class UserspaceController {
                 originBlog.setContent(blog.getContent());
                 originBlog.setSummary(blog.getSummary());
                 originBlog.setCatalog(blog.getCatalog());
+                originBlog.setTags(blog.getTags());
                 blogService.updateBlog(originBlog);
             }
         } catch (ConstraintViolationException e) {

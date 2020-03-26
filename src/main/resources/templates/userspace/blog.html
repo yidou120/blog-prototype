@@ -48,18 +48,8 @@
                         </a>
                     </h5>
 
-                    <!--<h5 >标签：
+                    <h5 >标签：
                         <a th:each="tag : ${#strings.arraySplit(blogModel.tags , ',')}" th:href="'/u/' + ${blogModel.user.username}  + '/blogs?keyword='+ ${tag}"> <span class="badge badge-default" th:text="${tag}">Web Design</span></a>
-                    </h5>
--->
-                    <h5>标签：
-                        <a href="/u/waylau/blogs?keyword=分布式"> <span class="badge badge-default">Web Design</span></a>
-                        <a href="/u/waylau/blogs?keyword=分布式"> <span class="badge badge-default">Jersey</span></a>
-                        <a href="/u/waylau/blogs?keyword=分布式"> <span class="badge badge-default">JavaScript</span></a>
-                        <a href="/u/waylau/blogs?keyword=分布式"> <span class="badge badge-default">CSS</span></a>
-                        <a href="/u/waylau/blogs?keyword=分布式"> <span class="badge badge-default">Java</span></a>
-                        <a href="/u/waylau/blogs?keyword=分布式"> <span class="badge badge-default">Freebies</span></a>
-
                     </h5>
                 </div>
 

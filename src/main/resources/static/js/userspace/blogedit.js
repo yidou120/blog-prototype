@@ -21,17 +21,7 @@ $(function() {
         imgurl: 'http://localhost:8081',
         base64url: 'http://localhost:8081'
     });
-  
-    // 初始化标签控件
-    $('.form-control-tag').tagEditor({
-        initialTags: [],
-        maxTags: 5,
-        delimiter: ', ',
-        forceLowercase: false,
-        animateDelete: 0,
-        placeholder: '请输入标签'
-    });
-    
+
     $('.form-control-chosen').chosen();
  
  	$("#uploadImage").click(function() {
@@ -68,7 +58,9 @@ $(function() {
 		    	"title": $('#title').val(), 
 		    	"summary": $('#summary').val(),
 		    	"content": $('#md').val(),
-				"catalog":{"id":$('#catalogSelect').val()}}),
+				"tags":$('.form-control-tag').val(),
+				"catalog":{"id":$('#catalogSelect').val()},
+		    	}),
 			beforeSend: function(request) {
 			    request.setRequestHeader(csrfHeader, csrfToken); // 添加  CSRF Token 
 			},
@@ -86,5 +78,8 @@ $(function() {
 		     }
 		})
  	})
- 	
+    // 初始化标签
+    $('.form-control-tag').tagsInput({
+        'defaultText':'输入标签'
+    });
 });
