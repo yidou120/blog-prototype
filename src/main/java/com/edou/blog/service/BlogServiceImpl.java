@@ -1,9 +1,6 @@
 package com.edou.blog.service;
 
-import com.edou.blog.domain.Blog;
-import com.edou.blog.domain.Comment;
-import com.edou.blog.domain.User;
-import com.edou.blog.domain.Vote;
+import com.edou.blog.domain.*;
 import com.edou.blog.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -121,5 +118,12 @@ public class BlogServiceImpl implements BlogService {
         Blog blog = blogRepository.findOne(blogId);
         blog.removeComment(commentId);
         blogRepository.save(blog);
+    }
+
+    //根据分类名查询博客列表
+    @Override
+    public Page<Blog> listBlogsByCatalog(Catalog catalog, Pageable pageable) {
+        Page<Blog> page = blogRepository.findByCatalog(catalog, pageable);
+        return page;
     }
 }

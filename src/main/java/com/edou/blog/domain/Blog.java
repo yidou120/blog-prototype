@@ -103,6 +103,12 @@ public class Blog implements Serializable {
                 inverseJoinColumns = @JoinColumn(name = "vote_id", referencedColumnName = "id"))
     private List<Vote> votes;
 
+    @Getter
+    @Setter
+    @OneToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+    @JoinColumn(name="catalog_id")
+    private Catalog catalog;
+
     public Blog(String title, String summary,String content) {
         this.title = title;
         this.summary = summary;

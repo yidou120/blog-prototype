@@ -42,12 +42,16 @@
                     <hr>
                 </div>
                 <div class="card-block">
-
-
-                    <h5>分类：<a href="/u/waylau/blogs?category=11">
+                    <h5>分类：
+                        <a th:href="'/u/'+${blogModel.user.username} + '/blogs?catalog='+${blogModel.catalog.id} " th:text="${blogModel.catalog.name}">
                         Spring Data
-                    </a></h5>
+                        </a>
+                    </h5>
 
+                    <!--<h5 >标签：
+                        <a th:each="tag : ${#strings.arraySplit(blogModel.tags , ',')}" th:href="'/u/' + ${blogModel.user.username}  + '/blogs?keyword='+ ${tag}"> <span class="badge badge-default" th:text="${tag}">Web Design</span></a>
+                    </h5>
+-->
                     <h5>标签：
                         <a href="/u/waylau/blogs?keyword=分布式"> <span class="badge badge-default">Web Design</span></a>
                         <a href="/u/waylau/blogs?keyword=分布式"> <span class="badge badge-default">Jersey</span></a>

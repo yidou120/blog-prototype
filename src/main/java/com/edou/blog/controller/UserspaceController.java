@@ -1,9 +1,11 @@
 package com.edou.blog.controller;
 
 import com.edou.blog.domain.Blog;
+import com.edou.blog.domain.Catalog;
 import com.edou.blog.domain.User;
 import com.edou.blog.domain.Vote;
 import com.edou.blog.service.BlogService;
+import com.edou.blog.service.CatalogService;
 import com.edou.blog.service.UserService;
 import com.edou.blog.util.ConstraintViolationExceptionHandler;
 import com.edou.blog.vo.Response;
@@ -14,11 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -49,6 +48,9 @@ public class UserspaceController {
 
     @Autowired
     private BlogService blogService;
+
+    @Autowired
+    private CatalogService catalogService;
 
     //返回个人设置页面
     @GetMapping("/{username}/profile")
@@ -119,7 +121,7 @@ public class UserspaceController {
     @GetMapping("/{username}/blogs")
     public String listBlogsByOrder(@PathVariable("username") String username,
                                    @RequestParam(value="order",required=false,defaultValue="new") String order,
-                                   @RequestParam(value="category",required=false ) Long category,
+                                   @RequestParam(value="catalog",required=false ) Long catalogId,
                                    @RequestParam(value="keyword",required=false ) String keyword,
                                    @RequestParam(value = "async",required = false) boolean async,
                                    @RequestParam(value = "pageIndex",required = false,defaultValue = "0") int pageIndex,
@@ -129,24 +131,38 @@ public class UserspaceController {
         //根据用户名查询用户
         User user = (User)userDetailsService.loadUserByUsername(username);
         model.addAttribute("user",user);
+        //是否是博主本人标志
+        User principal = null;
+        boolean isBlogOwner = false;
+        if(Objects.nonNull(SecurityContextHolder.getContext().getAuthentication())&&
+                SecurityContextHolder.getContext().getAuthentication().isAuthenticated()&&
+                !SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString().equals("anonymousUser")
+        ){
+            principal = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if(Objects.nonNull(principal) && username.equals(principal.getUsername())){
+                isBlogOwner = true;
+            }
+        }
 
-        /*if (category != null) {
-            System.out.print("category:" +category );
-            System.out.print("selflink:" + "redirect:/u/"+ username +"/blogs?category="+category);
-            return "/u";
-
-        }*/
         Page<Blog> page = null;
-        if(order.equals("hot")){
+        if(Objects.nonNull(catalogId)&&catalogId>0){
+            Catalog catalog = catalogService.getCatalogById(catalogId);
+            Pageable pageable = new PageRequest(pageIndex,pageSize);
+            page = blogService.listBlogsByCatalog(catalog,pageable);
+            order = "";
+        } else if(order.equals("hot")){
             Sort sort = new Sort(Sort.Direction.DESC,"readSize","commentSize","voteSize");
             Pageable pageable = new PageRequest(pageIndex,pageSize,sort);
             page = blogService.listBlogsByTitleVoteAndSort(user,keyword,pageable);
-        }
-        if(order.equals("new")){
+        } else if(order.equals("new")){
             Pageable pageable = new PageRequest(pageIndex,pageSize);
             page = blogService.listBlogsByTitleVote(user,keyword,pageable);
         }
         List<Blog> content = page.getContent();
+        model.addAttribute("isCatalogsOwner",isBlogOwner);
+        model.addAttribute("user",user);
+        model.addAttribute("keyword",keyword);
+        model.addAttribute("catalogId",catalogId);
         model.addAttribute("order",order);
         model.addAttribute("page",page);
         model.addAttribute("blogList",content);
@@ -163,17 +179,7 @@ public class UserspaceController {
         User principal = null;
         //每次访问阅读量自增1
         blogService.readingIncrease(id);
-        //是否是博主本人标志
-        boolean isBlogOwner = false;
-        if(Objects.nonNull(SecurityContextHolder.getContext().getAuthentication())&&
-            SecurityContextHolder.getContext().getAuthentication().isAuthenticated()&&
-                !SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString().equals("anonymousUser")
-        ){
-            principal = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if(Objects.nonNull(principal) && username.equals(principal.getUsername())){
-                isBlogOwner = true;
-            }
-        }
+
         //判断当前用户是否点赞本篇博客
         Vote currentVote = null;
         List<Vote> votes = blog.getVotes();
@@ -188,7 +194,6 @@ public class UserspaceController {
             }
         }
 
-        model.addAttribute("isBlogOwner",isBlogOwner);
         model.addAttribute("blogModel",blogService.getBlogById(id));
         model.addAttribute("currentVote",currentVote);
         return "/userspace/blog";
@@ -196,15 +201,24 @@ public class UserspaceController {
 
     //返回新建博客页面
     @GetMapping("/{username}/blogs/edit")
-    public ModelAndView editBlog(Model model) {
+    public ModelAndView editBlog(@PathVariable("username") String username,Model model) {
+        // 获取用户分类列表
+        User user = (User)userDetailsService.loadUserByUsername(username);
+        List<Catalog> catalogs = catalogService.listCatalogs(user);
         model.addAttribute("blog",new Blog(null,null,null));
+        model.addAttribute("catalogs", catalogs);
         return new ModelAndView("/userspace/blogedit","blogModel",model);
     }
 
     //返回编辑博文页面
     @GetMapping("/{username}/blogs/edit/{id}")
     public ModelAndView editBlog(@PathVariable("username") String username,@PathVariable("id") Long id, Model model) {
+        // 获取用户分类列表
+        User user = (User)userDetailsService.loadUserByUsername(username);
+        List<Catalog> catalogs = catalogService.listCatalogs(user);
+
         model.addAttribute("blog", blogService.getBlogById(id));
+        model.addAttribute("catalogs", catalogs);
         return new ModelAndView("/userspace/blogedit", "blogModel", model);
     }
 
@@ -227,6 +241,10 @@ public class UserspaceController {
     @PreAuthorize("authentication.name.equals(#username)")
     public ResponseEntity<Response> saveBlog(@PathVariable("username") String username,
                                              @RequestBody Blog blog){
+        // 对 Catalog 进行空处理
+        if (blog.getCatalog().getId() == null) {
+            return ResponseEntity.ok().body(new Response(false,"未选择分类"));
+        }
         //判断是更新还是新增
         try {
             if(Objects.isNull(blog.getId())){
@@ -240,6 +258,7 @@ public class UserspaceController {
                 originBlog.setTitle(blog.getTitle());
                 originBlog.setContent(blog.getContent());
                 originBlog.setSummary(blog.getSummary());
+                originBlog.setCatalog(blog.getCatalog());
                 blogService.updateBlog(originBlog);
             }
         } catch (ConstraintViolationException e) {

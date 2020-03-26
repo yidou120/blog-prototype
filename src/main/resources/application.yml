@@ -11,7 +11,7 @@ spring:
     username: root
     password: 123
     driver-class-name: com.mysql.cj.jdbc.Driver
-    #data: classpath:import.sql
+    #data: classpath:sql/import.sql
   jpa:
     hibernate:
       ddl-auto: update

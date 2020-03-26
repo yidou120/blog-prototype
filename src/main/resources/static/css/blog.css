@@ -12,6 +12,17 @@
     line-height: 60px; /* Vertically center the text there */
 }
 
+/* 元素靠右 */
+.blog-right {
+    float: right;
+    margin-right:0px;
+}
+
+.blog-list-group-item {
+    padding: .75rem 1.25rem;
+    border: 1px solid rgba(0,0,0,.125);
+}
+
 /* Index content*/
 .blog-content-container {
     margin-top: 2.0em;

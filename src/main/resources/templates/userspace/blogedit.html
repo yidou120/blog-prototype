@@ -74,11 +74,10 @@
                         </div>
                         <div class="row mt-1">
                             <div  class="col-lg-12">
-                                分类：					<select id="single" class="form-control form-control-chosen" data-placeholder="请选择">
-								  <option>Java</option>
-								  <option>分布式</option>
-								  <option>数据库</option>
-								</select>
+                                分类：
+                                <select id="catalogSelect" class="form-control form-control-chosen" data-placeholder="请选择">
+                                    <option th:value="*{id}" th:text="*{name}" th:each="catalog : ${blogModel.catalogs}" th:object="${catalog}" th:selected="${catalog  eq blogModel.blog.catalog }">Java</option>
+                                </select>
                             </div>
                         </div>
                         <div class="row mt-1">
