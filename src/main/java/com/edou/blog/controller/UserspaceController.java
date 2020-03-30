@@ -4,6 +4,7 @@ import com.edou.blog.domain.Blog;
 import com.edou.blog.domain.Catalog;
 import com.edou.blog.domain.User;
 import com.edou.blog.domain.Vote;
+import com.edou.blog.domain.es.EsBlog;
 import com.edou.blog.service.BlogService;
 import com.edou.blog.service.CatalogService;
 import com.edou.blog.service.UserService;
@@ -207,6 +208,12 @@ public class UserspaceController {
                 }
             }
         }
+        //查询此博客相关的博客列表
+        Pageable pageable = PageRequest.of(0,5);
+        Page<EsBlog> esBlogs = blogService.listBlogsByTags(blog.getTags(), pageable);
+        List<EsBlog> content = esBlogs.getContent();
+
+        model.addAttribute("relateBlogs",content);
         model.addAttribute("isBlogOwner", isBlogOwner);
         model.addAttribute("blogModel",blogService.getBlogById(id));
         model.addAttribute("currentVote",currentVote);

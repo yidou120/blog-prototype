@@ -3,6 +3,7 @@ package com.edou.blog.service;
 import com.edou.blog.domain.Blog;
 import com.edou.blog.domain.Catalog;
 import com.edou.blog.domain.User;
+import com.edou.blog.domain.es.EsBlog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -94,4 +95,12 @@ public interface BlogService {
      * @return
      */
     Page<Blog> listBlogsByCatalog(Catalog catalog, Pageable pageable);
+
+    /**
+     * 查询相关最热博客
+     * @param tags
+     * @param pageable
+     * @return
+     */
+    Page<EsBlog> listBlogsByTags(String tags, Pageable pageable);
 }

@@ -11,14 +11,17 @@ spring:
     username: root
     password: 123
     driver-class-name: com.mysql.cj.jdbc.Driver
-   # data: classpath:sql/import.sql
-   # initialization-mode: always
+    data: classpath:sql/import.sql
+    initialization-mode: always
     #schema: classpath:sql/schema.sql
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
   data:
     elasticsearch:
       cluster-nodes: 127.0.0.1:9300
       cluster-name: elasticsearch
+blog:
+  es:
+    host: 127.0.0.1:9200

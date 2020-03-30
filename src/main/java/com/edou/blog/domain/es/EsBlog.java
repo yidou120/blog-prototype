@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
@@ -24,7 +23,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Document(indexName = "blog",type = "blog")
+@Document(indexName = "blog",type = "blog",shards = 1,replicas = 0)
 public class EsBlog implements Serializable {
 
     private static final long serialVersionUID = -3039404347950817231L;
@@ -49,7 +48,7 @@ public class EsBlog implements Serializable {
     private String content;
 
 //    @Field(index = FieldIndex.not_analyzed,type = FieldType.String)
-    @Field(type = FieldType.keyword,fielddata = true)
+    @Field(type = FieldType.keyword)
     private String username;
 
 //    @Field(index = FieldIndex.not_analyzed,type = FieldType.String)

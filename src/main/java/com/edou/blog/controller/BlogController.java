@@ -65,6 +65,7 @@ public class BlogController {
         model.addAttribute("order", order);
         model.addAttribute("keyword", keyword);
         model.addAttribute("page", esBlogs);
+        System.out.println(esBlogs.getTotalPages()+" "+esBlogs.getTotalElements()+" "+esBlogs.getNumber());
         model.addAttribute("blogList", content);
 
         // 首次访问页面才加载

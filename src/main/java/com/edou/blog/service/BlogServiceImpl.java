@@ -90,8 +90,11 @@ public class BlogServiceImpl implements BlogService {
     //根据最热查询
     @Override
     public Page<Blog> listBlogsByTitleVoteAndSort(User user, String title, Pageable pageable) {
-        title = "%" + title + "%";
-        return blogRepository.findByUserAndTitleLike(user,title,pageable);
+//        title = "%" + title + "%";
+        if(Objects.isNull(title)){
+            title = "";
+        }
+        return blogRepository.findByUserAndTitleContaining(user,title,pageable);
     }
 
     //阅读量自增
@@ -172,5 +175,12 @@ public class BlogServiceImpl implements BlogService {
     public Page<Blog> listBlogsByCatalog(Catalog catalog, Pageable pageable) {
         Page<Blog> page = blogRepository.findByCatalog(catalog, pageable);
         return page;
+    }
+
+    //根据关键词查询相关博客列表
+    @Override
+    public Page<EsBlog> listBlogsByTags(String tags, Pageable pageable) {
+        Page<EsBlog> esBlogs = esBlogService.listHotestEsBlogs(tags, pageable);
+        return esBlogs;
     }
 }

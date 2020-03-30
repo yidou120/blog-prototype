@@ -2,6 +2,7 @@ package com.edou.blog.service;
 
 import com.edou.blog.domain.User;
 import com.edou.blog.domain.es.EsBlog;
+import com.edou.blog.vo.QueryResult;
 import com.edou.blog.vo.TagVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
