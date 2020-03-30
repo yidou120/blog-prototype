@@ -1,9 +1,10 @@
 buildscript {
     ext {
-        springBootVersion = '1.5.2.RELEASE'
+//        springBootVersion = '1.5.2.RELEASE'
+        springBootVersion = '2.0.1.RELEASE'
     }
-    ext['thymeleaf.version'] = '3.0.3.RELEASE'
-    ext['thymeleaf-layout-dialect.version'] = '2.2.0'
+//    ext['thymeleaf.version'] = '3.0.3.RELEASE'
+//    ext['thymeleaf-layout-dialect.version'] = '2.2.0'
     ext['hibernate.version'] = '5.2.8.Final'
     repositories {
         maven {
@@ -41,13 +42,15 @@ repositories {
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    //thymeleaf3或者springboot2版本之后 layout需要自行引入
+    compile('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect')
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
     compile("mysql:mysql-connector-java:6.0.5")
     runtime("com.h2database:h2:1.4.193")
     // 添加  Spring Security 依赖
     compile('org.springframework.boot:spring-boot-starter-security')
-    /*compile("org.springframework.boot:spring-boot-starter-data-elasticsearch")
-    compile("net.java.dev.jna:jna:4.3.0")*/
+    compile("org.springframework.boot:spring-boot-starter-data-elasticsearch")
+    compile("net.java.dev.jna:jna:5.3.1")
     // 添加  Apache Commons Lang 依赖
     compile('org.apache.commons:commons-lang3:3.5')
     // 添加   Thymeleaf Spring Security 依赖，与 Thymeleaf 版本一致都是 3.x
@@ -55,5 +58,7 @@ dependencies {
     // 添加 Markdown parser 依赖
     compile('es.nitaur.markdown:txtmark:0.16')
     testCompile("org.springframework.boot:spring-boot-starter-test")
-    providedCompile("org.projectlombok:lombok:1.18.8")
+//    providedCompile("org.projectlombok:lombok:1.18.8")
+    annotationProcessor("org.projectlombok:lombok:1.18.8")
+    compileOnly("org.projectlombok:lombok:1.18.8")
 }

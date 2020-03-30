@@ -10,7 +10,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @ClassName UserServiceImpl
@@ -33,7 +35,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     @Override
     public void removeUser(Long id) {
-        userRepositoryByDataBase.delete(id);
+        userRepositoryByDataBase.deleteById(id);
+//        userRepositoryByDataBase.delete(id);
     }
 
     @Transactional
@@ -50,7 +53,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User getUserById(Long id) {
-        return userRepositoryByDataBase.findOne(id);
+        Optional<User> optionalUser = userRepositoryByDataBase.findById(id);
+        if(optionalUser.isPresent()){
+            return optionalUser.get();
+        }
+//        return userRepositoryByDataBase.findOne(id);
+        return null;
     }
 
     @Override
@@ -67,5 +75,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         return userRepositoryByDataBase.findByUsername(username);
+    }
+
+    @Override
+    public List<User> listUsersByUsernames(Collection<String> usernames) {
+        return userRepositoryByDataBase.findByUsernameIn(usernames);
     }
 }

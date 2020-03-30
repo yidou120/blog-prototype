@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.Collection;
 import java.util.List;
 
 /*
@@ -64,4 +65,13 @@ public interface UserService {
 
     //根据用户名查找
     UserDetails loadUserByUsername(String username);
+
+    /**
+     * 根据名称列表查询
+     * @param usernames
+     * @return
+     */
+    List<User> listUsersByUsernames(Collection<String> usernames);
+
+
 }

@@ -35,24 +35,29 @@ public class User implements Serializable, UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "姓名不能为空")
+//    @NotEmpty(message = "姓名不能为空")
+    @javax.validation.constraints.NotEmpty(message = "姓名不能为空")
     @Size(min=2, max=20)
     @Column(nullable = false, length = 20) // 映射为字段，值不能为空
     private String name;
 
-    @NotEmpty(message = "邮箱不能为空")
+//    @NotEmpty(message = "邮箱不能为空")
+    @javax.validation.constraints.NotEmpty(message = "邮箱不能为空")
     @Size(max=50)
-    @Email(message= "邮箱格式不对" )
+//    @Email(message= "邮箱格式不对" )
+    @javax.validation.constraints.Email(message = "邮箱格式不对")
     @Column(nullable = false, length = 50, unique = true)
     private String email;
 
     //用户名
-    @NotEmpty(message = "账号不能为空")
+//    @NotEmpty(message = "账号不能为空")
+    @javax.validation.constraints.NotEmpty(message = "账号不能为空")
     @Size(min=3, max=20)
     @Column(nullable = false, length = 20, unique = true)
     private String username;
 
-    @NotEmpty(message = "密码不能为空")
+//    @NotEmpty(message = "密码不能为空")
+    @javax.validation.constraints.NotEmpty(message = "密码不能为空")
     @Size(max=100)
     @Column(length = 100)
     private String password;

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 /**
  * @ClassName CommentServiceImpl
@@ -23,13 +24,19 @@ public class CommentServiceImpl implements CommentService {
     //根据评论id查询评论
     @Override
     public Comment getCommentById(Long id) {
-        return commentRepository.findOne(id);
+        Optional<Comment> optionalComment = commentRepository.findById(id);
+        if(optionalComment.isPresent()){
+            return optionalComment.get();
+        }
+//        return commentRepository.findOne(id);
+        return null;
     }
 
     //根据评论id删除评论
     @Transactional
     @Override
     public void removeComment(Long id) {
-        commentRepository.delete(id);
+//        commentRepository.delete(id);
+        commentRepository.deleteById(id);
     }
 }

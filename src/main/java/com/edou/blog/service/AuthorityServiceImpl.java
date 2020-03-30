@@ -5,6 +5,8 @@ import com.edou.blog.repository.AuthorityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * @ClassName AuthorityServiceImpl
  * @Description 认真授权信息业务类
@@ -19,6 +21,11 @@ public class AuthorityServiceImpl implements AuthorityService {
 
     @Override
     public Authority getAuthorityById(Long id) {
-        return authorityRepository.findOne(id);
+        Optional<Authority> optionalAuthority = authorityRepository.findById(id);
+        if(optionalAuthority.isPresent()){
+            return optionalAuthority.get();
+        }
+//        return authorityRepository.findOne(id);
+        return null;
     }
 }

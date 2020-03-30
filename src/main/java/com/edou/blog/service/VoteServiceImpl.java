@@ -5,6 +5,9 @@ import com.edou.blog.repository.VoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.OptionalInt;
+
 /**
  * @ClassName VoteServiceImpl
  * @Description 点赞service业务实现类
@@ -21,12 +24,18 @@ public class VoteServiceImpl implements VoteService {
     //根据id获取Vote
     @Override
     public Vote getVoteById(Long id) {
-        return voteRepository.findOne(id);
+        Optional<Vote> optionalVote = voteRepository.findById(id);
+        if(optionalVote.isPresent()){
+            return optionalVote.get();
+        }
+//        return voteRepository.findOne(id);
+        return null;
     }
 
     //根据id删除Vote
     @Override
     public void removeVote(Long id) {
-        voteRepository.delete(id);
+        voteRepository.deleteById(id);
+//        voteRepository.delete(id);
     }
 }

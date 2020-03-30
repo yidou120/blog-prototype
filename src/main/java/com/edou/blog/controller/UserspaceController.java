@@ -147,15 +147,18 @@ public class UserspaceController {
         Page<Blog> page = null;
         if(Objects.nonNull(catalogId)&&catalogId>0){
             Catalog catalog = catalogService.getCatalogById(catalogId);
-            Pageable pageable = new PageRequest(pageIndex,pageSize);
+//            Pageable pageable = new PageRequest(pageIndex,pageSize);
+            Pageable pageable = PageRequest.of(pageIndex,pageSize);
             page = blogService.listBlogsByCatalog(catalog,pageable);
             order = "";
         } else if(order.equals("hot")){
             Sort sort = new Sort(Sort.Direction.DESC,"readSize","commentSize","voteSize");
-            Pageable pageable = new PageRequest(pageIndex,pageSize,sort);
+            Pageable pageable = PageRequest.of(pageIndex,pageSize,sort);
+//            Pageable pageable = new PageRequest(pageIndex,pageSize,sort);
             page = blogService.listBlogsByTitleVoteAndSort(user,keyword,pageable);
         } else if(order.equals("new")){
-            Pageable pageable = new PageRequest(pageIndex,pageSize);
+            Pageable pageable = PageRequest.of(pageIndex,pageSize);
+//            Pageable pageable = new PageRequest(pageIndex,pageSize);
             page = blogService.listBlogsByTitleVote(user,keyword,pageable);
         }
         List<Blog> content = page.getContent();
@@ -271,7 +274,7 @@ public class UserspaceController {
                 originBlog.setSummary(blog.getSummary());
                 originBlog.setCatalog(blog.getCatalog());
                 originBlog.setTags(blog.getTags());
-                blogService.updateBlog(originBlog);
+                blogService.saveBlog(originBlog);
             }
         } catch (ConstraintViolationException e) {
             return ResponseEntity.ok().body(new Response(false, ConstraintViolationExceptionHandler.getMessage(e)));

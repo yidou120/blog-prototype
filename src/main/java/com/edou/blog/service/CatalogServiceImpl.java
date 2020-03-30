@@ -11,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @ClassName CatalogServiceImpl
@@ -39,13 +40,19 @@ public class CatalogServiceImpl implements CatalogService {
     //删除
     @Override
     public void removeCatalog(Long id) {
-        catalogRepository.delete(id);
+        catalogRepository.deleteById(id);
+//        catalogRepository.delete(id);
     }
 
     //查找
     @Override
     public Catalog getCatalogById(Long id) {
-        return catalogRepository.findOne(id);
+        Optional<Catalog> optional = catalogRepository.findById(id);
+        if(optional.isPresent()){
+            return optional.get();
+        }
+        return null;
+//        return catalogRepository.findOne(id);
     }
 
     //所有分类列表

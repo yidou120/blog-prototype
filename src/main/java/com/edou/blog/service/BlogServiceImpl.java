@@ -1,6 +1,7 @@
 package com.edou.blog.service;
 
 import com.edou.blog.domain.*;
+import com.edou.blog.domain.es.EsBlog;
 import com.edou.blog.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @ClassName BlogServiceImpl
@@ -24,18 +26,34 @@ public class BlogServiceImpl implements BlogService {
     @Autowired
     BlogRepository blogRepository;
 
+    @Autowired
+    EsBlogService esBlogService;
+
     //保存博客
     @Transactional
     @Override
     public Blog saveBlog(Blog blog) {
-        return blogRepository.save(blog);
+        boolean isNew = Objects.isNull(blog.getId());
+        EsBlog esBlog = null;
+        Blog returnBlog = blogRepository.save(blog);
+        if(isNew){
+            esBlog = new EsBlog(returnBlog);
+        }else{
+            esBlog = esBlogService.getEsBlogByBlogId(blog.getId());
+            esBlog.update(returnBlog);
+        }
+        esBlogService.updateEsBlog(esBlog);
+        return returnBlog;
     }
 
     //删除博客
     @Transactional
     @Override
     public void removeBlog(Long id) {
-        blogRepository.delete(id);
+//        blogRepository.delete(id);
+        blogRepository.deleteById(id);
+        EsBlog esBlog = esBlogService.getEsBlogByBlogId(id);
+        esBlogService.removeEsBlog(esBlog.getId());
     }
 
     //更新博客
@@ -48,8 +66,13 @@ public class BlogServiceImpl implements BlogService {
     //根据id查询博客
     @Override
     public Blog getBlogById(Long id) {
-        Blog blog = blogRepository.findOne(id);
-        return blog;
+        Optional<Blog> optional = blogRepository.findById(id);
+        if(optional.isPresent()){
+            return optional.get();
+        }
+//        Blog blog = blogRepository.findOne(id);
+//        return blog;
+        return null;
     }
 
     //默认根据title最新查询
@@ -74,50 +97,74 @@ public class BlogServiceImpl implements BlogService {
     //阅读量自增
     @Override
     public void readingIncrease(Long id) {
-        Blog blog = blogRepository.findOne(id);
+        Blog blog = null;
+        Optional<Blog> optionalBlog = blogRepository.findById(id);
+        if(optionalBlog.isPresent()){
+            blog = optionalBlog.get();
+        }
+//        Blog blog = blogRepository.findOne(id);
         blog.setReadSize(blog.getReadSize()+1);
-        blogRepository.save(blog);
+        this.saveBlog(blog);
     }
 
     //点赞
     @Override
     public Blog createVote(Long blogId) {
-        Blog blogOrigin = blogRepository.findOne(blogId);
+        Blog blogOrigin = null;
+        Optional<Blog> optionalBlog = blogRepository.findById(blogId);
+        if(optionalBlog.isPresent()){
+            blogOrigin = optionalBlog.get();
+        }
+//        Blog blogOrigin = blogRepository.findOne(blogId);
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Vote vote = new Vote(user);
         boolean isExist = blogOrigin.addVote(vote);
         if(isExist){
             throw new IllegalArgumentException("该用户已经点过赞了");
         }
-        Blog blog = blogRepository.save(blogOrigin);
-        return blog;
+        return this.saveBlog(blogOrigin);
     }
 
     //取消点赞
     @Override
     public void removeVote(Long blogId, Long voteId) {
-        Blog blogOrigin = blogRepository.findOne(blogId);
+        Blog blogOrigin = null;
+        Optional<Blog> optionalBlog = blogRepository.findById(blogId);
+        if(optionalBlog.isPresent()){
+            blogOrigin = optionalBlog.get();
+        }
+//        Blog blogOrigin = blogRepository.findOne(blogId);
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         blogOrigin.removeVote(voteId);
-        blogRepository.save(blogOrigin);
+        this.saveBlog(blogOrigin);
     }
 
     //发表评论
     @Override
     public Blog createComment(Long blogId, String commentContent) {
-        Blog blog = blogRepository.findOne(blogId);
+        Blog blog = null;
+        Optional<Blog> optionalBlog = blogRepository.findById(blogId);
+        if(optionalBlog.isPresent()){
+            blog = optionalBlog.get();
+        }
+//        Blog blog = blogRepository.findOne(blogId);
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Comment comment = new Comment(user,commentContent);
         blog.addComment(comment);
-        return blogRepository.save(blog);
+        return this.saveBlog(blog);
     }
 
     //删除评论
     @Override
     public void removeComment(Long blogId, Long commentId) {
-        Blog blog = blogRepository.findOne(blogId);
+        Blog blog = null;
+        Optional<Blog> optionalBlog = blogRepository.findById(blogId);
+        if(optionalBlog.isPresent()){
+            blog = optionalBlog.get();
+        }
+//        Blog blog = blogRepository.findOne(blogId);
         blog.removeComment(commentId);
-        blogRepository.save(blog);
+        this.saveBlog(blog);
     }
 
     //根据分类名查询博客列表

@@ -32,7 +32,8 @@ public class Catalog implements Serializable {
 
     @Getter
     @Setter
-    @NotEmpty(message = "名称不能为空")
+//    @NotEmpty(message = "名称不能为空")
+    @javax.validation.constraints.NotEmpty(message = "名称不能为空")
     @Size(min=2, max=30)
     @Column(nullable = false) // 映射为字段，值不能为空
     private String name;

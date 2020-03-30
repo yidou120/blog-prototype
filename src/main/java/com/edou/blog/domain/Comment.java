@@ -32,7 +32,8 @@ public class Comment implements Serializable {
 
     @Getter
     @Setter
-    @NotEmpty(message = "评论内容不能为空")
+//    @NotEmpty(message = "评论内容不能为空")
+    @javax.validation.constraints.NotEmpty(message = "评论内容不能为空")
     @Size(min=2, max=500)
     @Column(nullable = false) // 映射为字段，值不能为空
     private String content;
